@@ -1,53 +1,172 @@
 # ICT Inventory System
 
+A web-based ICT Inventory Management System designed to help organizations efficiently manage, track, and monitor ICT assets from a centralized platform.
+
+The system uses a modern full-stack architecture with a React/TypeScript frontend and a Node.js/Express/TypeScript backend, with Prisma ORM for database management.
+
+---
+
 ## Project Overview
 
-The ICT Inventory System is a web-based application designed to help organizations manage and track ICT assets efficiently. The system provides a centralized platform for recording, monitoring, updating, and managing information about computers, networking equipment, peripherals, software, and other ICT assets.
+The ICT Inventory System provides a centralized platform for managing organizational ICT assets such as computers, networking equipment, peripherals, and other technology resources.
 
-The system consists of a frontend application that provides the user interface and a backend application responsible for business logic, database operations, authentication, and API services.
+The system is designed to improve inventory accuracy, simplify asset tracking, reduce manual record keeping, and provide users with timely information about ICT resources.
 
-## Main Objectives
+---
 
-- To provide centralized management of ICT assets.
-- To maintain accurate records of IsssCT equipment.
-- To enable users to add, update, view, and manage inventory records.
-- To improve tracking of ICT equipment within an organization.
-- To reduce manual inventory management.
-- To provide secure access to inventory information.
-- To improve the efficiency and accuracy of ICT asset management.
+## Objectives
+
+The main objectives of the system are to:
+
+- Centralize ICT asset records.
+- Improve the accuracy of inventory information.
+- Enable efficient registration and management of ICT assets.
+- Allow users to search, filter, and monitor inventory.
+- Improve tracking of ICT assets and their status.
+- Provide secure user authentication and authorization.
+- Generate inventory reports.
+- Improve the overall efficiency of ICT asset management.
+
+---
 
 ## Key Features
 
 - User authentication and authorization
 - ICT asset registration
-- Asset information management
-- Asset updating and deletion
-- Asset search and filtering
-- Inventory tracking
 - Asset categorization
-- User management
+- Asset information management
+- Asset status tracking
+- Asset search and filtering
 - Dashboard and inventory statistics
-- Backend REST API
-- Database integration
+- User management
+- Form validation
+- Secure API endpoints
+- Rate limiting
+- Email functionality
+- Scheduled tasks
+- PDF report generation
+- Excel report generation
+- Database management through Prisma
+- Automated testing
 
-## System Architecture
+---
 
-The application is divided into two major components:
+# Technology Stack
+
+## Frontend
+
+The frontend is a React-based single-page application built with TypeScript and Vite.
+
+### Technologies
+
+- React 18
+- TypeScript
+- Vite
+- React Router
+- TanStack React Query
+- React Hook Form
+- Zod
+- Axios
+- Tailwind CSS
+- Lucide React
+- Recharts
+- date-fns
+
+### Frontend responsibilities
+
+The frontend is responsible for:
+
+- Providing the user interface.
+- Handling navigation.
+- Managing forms.
+- Communicating with the backend API.
+- Displaying inventory information.
+- Displaying dashboards and charts.
+- Handling client-side validation.
+- Managing application state and server data.
+
+---
+
+## Backend
+
+The backend is a REST API built with Node.js, Express, and TypeScript.
+
+### Technologies
+
+- Node.js
+- Express.js
+- TypeScript
+- Prisma ORM
+- JWT
+- bcrypt
+- Zod
+- Helmet
+- CORS
+- Express Rate Limit
+- Multer
+- Nodemailer
+- node-cron
+- PDFKit
+- ExcelJS
+
+### Backend responsibilities
+
+The backend is responsible for:
+
+- Processing API requests.
+- Business logic.
+- Authentication and authorization.
+- Database operations.
+- Input validation.
+- File handling.
+- Report generation.
+- Email services.
+- Scheduled tasks.
+- API security.
+
+---
+
+## Database
+
+The backend uses **Prisma ORM** for database access and schema management.
+
+Database migrations and client generation are handled through Prisma.
+
+The exact database engine is configured in:
 
 ```text
-ICT Inventory System
-│
-├── Frontend
-│   └── User Interface
-│
-└── Backend
-    ├── REST API
-    ├── Business Logic
-    ├── Authentication
-    └── Database
+backend/prisma/schema.prisma
 ```
 
-## Project Structure
+---
+
+# System Architecture
+
+```text
+                    ICT INVENTORY SYSTEM
+                            │
+              ┌─────────────┴─────────────┐
+              │                           │
+         FRONTEND                     BACKEND
+              │                           │
+      React + TypeScript          Node.js + Express
+              │                           │
+            Vite                    TypeScript
+              │                           │
+       React Router                    REST API
+              │                           │
+      React Query / Axios               │
+              │                           │
+              └──────────────┬────────────┘
+                             │
+                         Prisma ORM
+                             │
+                         DATABASE
+```
+
+---
+
+# Project Structure
 
 ```text
 ict-inventory-system/
@@ -56,55 +175,44 @@ ict-inventory-system/
 │   ├── src/
 │   ├── public/
 │   ├── package.json
+│   ├── vite.config.*
 │   └── ...
 │
 ├── backend/
 │   ├── src/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
+│   ├── prisma/
 │   ├── package.json
+│   ├── tsconfig.json
 │   └── ...
 │
-├── .env.example
 ├── .gitignore
-├── README.md
-└── ...
+├── .env.example
+└── README.md
 ```
 
-## Technologies Used
+---
 
-### Frontend
+# Prerequisites
 
-- [Add your frontend framework here]
-- HTML5
-- CSS3
-- JavaScript
-- [Add other frontend technologies]
-
-### Backend
+Before running the system, install:
 
 - Node.js
-- Express.js
-- REST API
-- [Add other backend technologies]
-
-### Database
-
-- [Add your database here]
-
-### Development Tools
-
-- Git
-- GitHub
-- Visual Studio Code
-- Postman
 - npm
+- Git
+- The database configured in `backend/prisma/schema.prisma`
 
-## Installation
+You can verify Node.js and npm using:
 
-### 1. Clone the Repository
+```bash
+node --version
+npm --version
+```
+
+---
+
+# Installation
+
+## 1. Clone the Repository
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/ict-inventory-system.git
@@ -116,374 +224,273 @@ Navigate into the project:
 cd ict-inventory-system
 ```
 
-### 2. Install Backend Dependencies
+---
+
+# Backend Setup
+
+## 2. Navigate to the Backend
 
 ```bash
 cd backend
+```
+
+## 3. Install Dependencies
+
+```bash
 npm install
 ```
 
-### 3. Configure Backend Environment Variables
+## 4. Configure Environment Variables
 
 Create a `.env` file inside the `backend` directory.
 
-Use the `.env.example` file as a reference.
+Use the project's `.env.example` file as a reference.
 
 Example:
 
 ```env
 PORT=5000
-DATABASE_URL=your_database_connection
+DATABASE_URL=your_database_connection_string
 JWT_SECRET=your_secret_key
 ```
 
 Do not commit the `.env` file to GitHub.
 
-### 4. Start the Backend
+---
+
+## 5. Generate Prisma Client
+
+```bash
+npm run prisma:generate
+```
+
+## 6. Run Database Migrations
+
+```bash
+npm run prisma:migrate
+```
+
+## 7. Seed the Database
+
+If seed data is required:
+
+```bash
+npm run prisma:seed
+```
+
+## 8. Start the Backend in Development Mode
 
 ```bash
 npm run dev
 ```
 
-or:
+The backend will start using the development configuration defined in `package.json`.
 
-```bash
-npm start
-```
+---
 
-depending on the project's configuration.
+# Frontend Setup
 
-### 5. Install Frontend Dependencies
-
-Open another terminal and run:
+Open another terminal and navigate to the frontend:
 
 ```bash
 cd frontend
+```
+
+Install dependencies:
+
+```bash
 npm install
 ```
 
-### 6. Configure Frontend Environment Variables
+Create the required frontend `.env` file if the application uses frontend environment variables.
 
-Create the appropriate `.env` file using the frontend `.env.example` as a reference.
-
-### 7. Start the Frontend
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-The frontend will normally be available at the local address displayed by the development server.
+The Vite development server will display the local URL in the terminal.
 
-## Environment Variables
+---
 
-Environment variables are used to store configuration information and sensitive credentials.
+# Available Backend Commands
 
-Actual `.env` files should **never be committed to GitHub**.
+From the `backend` directory:
 
-Example environment variables:
+| Command | Description |
+|---|---|
+| `npm run dev` | Start backend in development mode |
+| `npm run build` | Compile TypeScript |
+| `npm start` | Start compiled backend |
+| `npm run prisma:migrate` | Run Prisma database migrations |
+| `npm run prisma:generate` | Generate Prisma Client |
+| `npm run prisma:seed` | Seed the database |
+| `npm run prisma:studio` | Open Prisma Studio |
+| `npm test` | Run tests |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run test:coverage` | Generate test coverage |
 
-```env
-PORT=5000
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret
-```
+---
 
-## API
+# Available Frontend Commands
 
-The backend provides REST API endpoints used by the frontend to communicate with the system.
+From the `frontend` directory:
 
-Example API structure:
+| Command | Description |
+|---|---|
+| `npm run dev` | Start Vite development server |
+| `npm run build` | Build the frontend for production |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Run ESLint |
+
+---
+
+# Environment Variables
+
+Environment variables are used to store configuration values and sensitive information.
+
+Real environment files should not be committed to GitHub.
+
+For example:
 
 ```text
-/api/auth
-/api/users
-/api/assets
-/api/categories
-/api/dashboard
+.env
 ```
 
-The exact endpoints depend on the implementation of the system.
+should remain private.
 
-## Security
+Example configuration files such as:
 
-The system is designed with security considerations including:
+```text
+.env.example
+```
 
-- Authentication
-- Authorization
-- Password protection
-- Environment variables for sensitive configuration
-- Input validation
-- Protected API endpoints
-- Secure database access
+may be committed to GitHub.
 
-Sensitive credentials must not be stored directly in source code or committed to GitHub.
+---
 
-## Future Improvements
+# Security
 
-Possible future improvements include:
+The backend implements several security-related technologies, including:
 
-- Email notifications
-- Asset maintenance tracking
+- JSON Web Tokens (JWT)
+- Password hashing with bcrypt
+- Helmet security middleware
+- CORS configuration
+- Express rate limiting
+- Zod input validation
+- Environment-based configuration
+
+Sensitive credentials such as database passwords, JWT secrets, API keys, and email credentials must never be committed to the repository.
+
+---
+
+# Reporting
+
+The backend includes support for generating reports using:
+
+- PDFKit for PDF documents
+- ExcelJS for Excel spreadsheets
+
+These features can be used to provide downloadable inventory reports.
+
+---
+
+# Testing
+
+The backend uses Jest and Supertest for automated testing.
+
+Run the test suite with:
+
+```bash
+npm test
+```
+
+To run tests continuously during development:
+
+```bash
+npm run test:watch
+```
+
+To generate test coverage:
+
+```bash
+npm run test:coverage
+```
+
+---
+
+# Development Workflow
+
+A typical development workflow is:
+
+```text
+Make changes
+     ↓
+Run and test the application
+     ↓
+git status
+     ↓
+git add .
+     ↓
+git commit -m "Describe changes"
+     ↓
+git push
+```
+
+---
+
+# Git and GitHub
+
+The project uses Git for version control and GitHub for source-code hosting.
+
+To push future changes:
+
+```bash
+git add .
+git commit -m "Describe your changes"
+git push
+```
+
+---
+
+# Future Improvements
+
+Potential future improvements include:
+
+- Advanced role-based access control
+- QR code and barcode asset tracking
 - Asset assignment history
-- Automated reports
-- Exporting inventory reports to PDF or Excel
-- Advanced analytics
-- Role-based access control
-- Barcode or QR-code asset tracking
+- Asset maintenance management
+- Automated email notifications
+- Advanced inventory analytics
+- Scheduled inventory reports
+- PDF and Excel report customization
 - Cloud deployment
 - Automated database backups
+- Audit logging
+- Mobile application support
 
-## Contributors
+---
+
+# Contributors
 
 - Caleb
-- [Add other team members]
+- Add other project contributors here
 
-## License
+---
 
-This project was developed for academic/project purposes.
+# Project Status
 
-A suitable open-source license can be added if the project is intended for public distribution.# ICT Inventory System
+**Development**
 
-## Project Overview
+The system is currently under active development.
 
-The ICT Inventory System is a web-based application designed to help organizations manage and track ICT assets efficiently. The system provides a centralized platform for recording, monitoring, updating, and managing information about computers, networking equipment, peripherals, software, and other ICT assets.
+---
 
-The system consists of a frontend application that provides the user interface and a backend application responsible for business logic, database operations, authentication, and API services.
+# License
 
-## Main Objectives
-
-- To provide centralized management of ICT assets.
-- To maintain accurate records of ICT equipment.
-- To enable users to add, update, view, and manage inventory records.
-- To improve tracking of ICT equipment within an organization.
-- To reduce manual inventory management.
-- To provide secure access to inventory information.
-- To improve the efficiency and accuracy of ICT asset management.
-
-## Key Features
-
-- User authentication and authorization
-- ICT asset registration
-- Asset information management
-- Asset updating and deletion
-- Asset search and filtering
-- Inventory tracking
-- Asset categorization
-- User management
-- Dashboard and inventory statistics
-- Backend REST API
-- Database integration
-
-## System Architecture
-
-The application is divided into two major components:
-
-```text
-ICT Inventory System
-│
-├── Frontend
-│   └── User Interface
-│
-└── Backend
-    ├── REST API
-    ├── Business Logic
-    ├── Authentication
-    └── Database
-```
-
-## Project Structure
-
-```text
-ict-inventory-system/
-│
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── ...
-│
-├── backend/
-│   ├── src/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   ├── package.json
-│   └── ...
-│
-├── .env.example
-├── .gitignore
-├── README.md
-└── ...
-```
-
-## Technologies Used
-
-### Frontend
-
-- [Add your frontend framework here]
-- HTML5
-- CSS3
-- JavaScript
-- [Add other frontend technologies]
-
-### Backend
-
-- Node.js
-- Express.js
-- REST API
-- [Add other backend technologies]
-
-### Database
-
-- [Add your database here]
-
-### Development Tools
-
-- Git
-- GitHub
-- Visual Studio Code
-- Postman
-- npm
-
-## Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/YOUR_USERNAME/ict-inventory-system.git
-```
-
-Navigate into the project:
-
-```bash
-cd ict-inventory-system
-```
-
-### 2. Install Backend Dependencies
-
-```bash
-cd backend
-npm install
-```
-
-### 3. Configure Backend Environment Variables
-
-Create a `.env` file inside the `backend` directory.
-
-Use the `.env.example` file as a reference.
-
-Example:
-
-```env
-PORT=5000
-DATABASE_URL=your_database_connection
-JWT_SECRET=your_secret_key
-```
-
-Do not commit the `.env` file to GitHub.
-
-### 4. Start the Backend
-
-```bash
-npm run dev
-```
-
-or:
-
-```bash
-npm start
-```
-
-depending on the project's configuration.
-
-### 5. Install Frontend Dependencies
-
-Open another terminal and run:
-
-```bash
-cd frontend
-npm install
-```
-
-### 6. Configure Frontend Environment Variables
-
-Create the appropriate `.env` file using the frontend `.env.example` as a reference.
-
-### 7. Start the Frontend
-
-```bash
-npm run dev
-```
-
-The frontend will normally be available at the local address displayed by the development server.
-
-## Environment Variables
-
-Environment variables are used to store configuration information and sensitive credentials.
-
-Actual `.env` files should **never be committed to GitHub**.
-
-Example environment variables:
-
-```env
-PORT=5000
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret
-```
-
-## API
-
-The backend provides REST API endpoints used by the frontend to communicate with the system.
-
-Example API structure:
-
-```text
-/api/auth
-/api/users
-/api/assets
-/api/categories
-/api/dashboard
-```
-
-The exact endpoints depend on the implementation of the system.
-
-## Security
-
-The system is designed with security considerations including:
-
-- Authentication
-- Authorization
-- Password protection
-- Environment variables for sensitive configuration
-- Input validation
-- Protected API endpoints
-- Secure database access
-
-Sensitive credentials must not be stored directly in source code or committed to GitHub.
-
-## Future Improvements
-
-Possible future improvements include:
-
-- Email notifications
-- Asset maintenance tracking
-- Asset assignment history
-- Automated reports
-- Exporting inventory reports to PDF or Excel
-- Advanced analytics
-- Role-based access control
-- Barcode or QR-code asset tracking
-- Cloud deployment
-- Automated database backups
-
-## Contributors
-
-- Caleb
-- [Add other team members]
-
-## License
-
-This project was developed for academic/project purposes.
+This project was developed for academic and/or organizational purposes.
 
 A suitable open-source license can be added if the project is intended for public distribution.
