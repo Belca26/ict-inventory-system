@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ict_inventory
+      POSTGRES_PASSWORD: dev_password_change_me
+      POSTGRES_DB: ict_inventory
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ict_inventory']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      target: builder # use the builder stage directly for dev — has devDependencies + ts-node-dev
+    command: sh -c "npx prisma migrate deploy && npm run dev"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '4000:4000'
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgresql://ict_inventory:dev_password_change_me@postgres:5432/ict_inventory
+      JWT_ACCESS_SECRET: dev_only_access_secret_replace_in_prod_min_32_chars
+      JWT_REFRESH_SECRET: dev_only_refresh_secret_replace_in_prod_min_32_chars
+      CORS_ORIGIN: http://localhost:5173
+    volumes:
+      - ./src:/app/src           # hot reload on source changes
+      - ./prisma:/app/prisma
+      - uploads_data:/app/uploads
+
+  # Optional: lightweight DB browser for local development.
+  # Visit http://localhost:8080 — server: postgres, user/pass/db as above.
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  uploads_data:

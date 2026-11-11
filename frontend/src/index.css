@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Institutional brand palette:
+  - Royal Blue  #002D62 -> primary: nav/sidebar background, headers, branding banners
+  - Golden Yellow #FFCC00 -> accent: highlights, active/hover indicators, accent lines
+  - Maroon      #4A2C2A -> brand-maroon: logo integration, typography accents, thematic borders
+  - Pure White  #FFFFFF -> background/card: core page backgrounds, header link text
+  Status colors (success/warning/destructive) stay semantically distinct from
+  the brand palette on purpose — a gold "highlight" and an amber "warning"
+  need to stay visually distinguishable, so status colors are NOT overridden
+  by brand accent even though both sit in a similar warm range.
+*/
+:root {
+  --background: 0 0% 100%;             /* Pure White */
+  --foreground: 222 30% 12%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 30% 12%;
+
+  --muted: 212 35% 95%;                /* light royal-blue tint */
+  --muted-foreground: 215 15% 40%;
+
+  --primary: 212 100% 19%;             /* Royal Blue #002D62 */
+  --primary-foreground: 0 0% 100%;
+
+  --accent: 48 100% 50%;               /* Golden Yellow #FFCC00 */
+  --accent-foreground: 4 28% 23%;      /* Maroon text on gold for contrast */
+
+  --brand-maroon: 4 28% 23%;           /* #4A2C2A */
+  --brand-maroon-foreground: 0 0% 100%;
+
+  --border: 212 25% 87%;
+
+  --destructive: 0 65% 48%;
+  --destructive-foreground: 0 0% 100%;
+
+  --warning: 32 85% 45%;
+  --warning-foreground: 0 0% 100%;
+
+  --success: 152 45% 32%;
+  --success-foreground: 0 0% 100%;
+}
+
+* { border-color: hsl(var(--border)); }
+body { @apply bg-background text-foreground antialiased; }
+
+/* Asset tags, serial numbers, IDs — the "physical inventory" signature */
+.asset-tag {
+  @apply font-mono text-sm tracking-tight;
+}

@@ -1,0 +1,418 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        RoleName @unique
+  description String?
+  createdAt   DateTime @default(now())
+  users       User[]
+
+  @@map("roles")
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  email              String              @unique
+  passwordHash       String
+  firstName          String
+  lastName           String
+  phone              String?
+  isActive           Boolean             @default(true)
+  roleId             String
+  departmentId       String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  deletedAt          DateTime?
+  createdAssets      Asset[]             @relation("AssetCreatedBy")
+  auditLogs          AuditLog[]
+  maintenanceRecords MaintenanceRecord[] @relation("TechnicianRecords")
+  notifications      Notification[]
+  refreshTokens      RefreshToken[]
+  signatures         Signature[]
+  department         Department?         @relation(fields: [departmentId], references: [id])
+  role               Role                @relation(fields: [roleId], references: [id])
+
+  @@index([email])
+  @@index([departmentId])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Building {
+  id        String   @id @default(cuid())
+  name      String
+  campus    String
+  createdAt DateTime @default(now())
+  assets    Asset[]
+  rooms     Room[]
+
+  @@unique([name, campus])
+  @@map("buildings")
+}
+
+model Room {
+  id         String   @id @default(cuid())
+  name       String
+  floor      String?
+  buildingId String
+  createdAt  DateTime @default(now())
+  assets     Asset[]
+  building   Building @relation(fields: [buildingId], references: [id])
+
+  @@index([buildingId])
+  @@map("rooms")
+}
+
+model Department {
+  id                 String              @id @default(cuid())
+  name               String              @unique
+  buildingId         String?
+  floor              String?
+  contactPerson      String?
+  contactPhone       String?
+  contactEmail       String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  assets             Asset[]
+  maintenanceRecords MaintenanceRecord[]
+  notifications      Notification[]
+  users              User[]
+
+  @@map("departments")
+}
+
+model AssetType {
+  id       String         @id @default(cuid())
+  name     String         @unique
+  category DeviceCategory
+  assets   Asset[]
+
+  @@map("asset_types")
+}
+
+model Manufacturer {
+  id     String  @id @default(cuid())
+  name   String  @unique
+  assets Asset[]
+
+  @@map("manufacturers")
+}
+
+model Asset {
+  id                 String                @id @default(cuid())
+  assetTag           String                @unique
+  serialNumber       String?               @unique
+  assetTypeId        String
+  manufacturerId     String?
+  model              String?
+  purchaseDate       DateTime?
+  warrantyExpiry     DateTime?
+  vendor             String?
+  cost               Decimal?              @db.Decimal(12, 2)
+  status             AssetStatus           @default(ACTIVE)
+  campus             String?
+  buildingId         String?
+  roomId             String?
+  departmentId       String?
+  createdById        String?
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  deletedAt          DateTime?
+  assetType          AssetType             @relation(fields: [assetTypeId], references: [id])
+  building           Building?             @relation(fields: [buildingId], references: [id])
+  createdBy          User?                 @relation("AssetCreatedBy", fields: [createdById], references: [id])
+  department         Department?           @relation(fields: [departmentId], references: [id])
+  manufacturer       Manufacturer?         @relation(fields: [manufacturerId], references: [id])
+  room               Room?                 @relation(fields: [roomId], references: [id])
+  computerSpec       ComputerSpec?
+  maintenanceRecords MaintenanceRecord[]
+  schedules          MaintenanceSchedule[]
+  networkDeviceSpec  NetworkDeviceSpec?
+  notifications      Notification[]
+  printerSpec        PrinterSpec?
+
+  @@index([assetTag])
+  @@index([serialNumber])
+  @@index([status])
+  @@index([departmentId])
+  @@index([assetTypeId])
+  @@map("assets")
+}
+
+model ComputerSpec {
+  id          String  @id @default(cuid())
+  assetId     String  @unique
+  cpu         String?
+  ramGb       Int?
+  storageGb   Int?
+  storageType String?
+  gpu         String?
+  os          String?
+  asset       Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([ramGb])
+  @@index([storageType])
+  @@index([os])
+  @@map("computer_specs")
+}
+
+model NetworkDeviceSpec {
+  id              String   @id @default(cuid())
+  assetId         String   @unique
+  numberOfPorts   Int?
+  isManaged       Boolean?
+  firmwareVersion String?
+  ipAddress       String?
+  macAddress      String?
+  asset           Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([ipAddress])
+  @@map("network_device_specs")
+}
+
+model PrinterSpec {
+  id               String  @id @default(cuid())
+  assetId          String  @unique
+  printerType      String?
+  isNetworkPrinter Boolean @default(false)
+  isUsbPrinter     Boolean @default(false)
+  tonerModel       String?
+  asset            Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@map("printer_specs")
+}
+
+model MaintenanceRecord {
+  id              String                          @id @default(cuid())
+  assetId         String
+  technicianId    String
+  departmentId    String?
+  maintenanceType MaintenanceType
+  status          MaintenanceStatus               @default(PENDING)
+  technicianNotes String?
+  recommendations String?
+  timeStarted     DateTime?
+  timeFinished    DateTime?
+  labourHours     Decimal?                        @db.Decimal(6, 2)
+  createdAt       DateTime                        @default(now())
+  updatedAt       DateTime                        @updatedAt
+  attachments     MaintenanceAttachment[]
+  parts           MaintenancePart[]
+  procedures      MaintenanceProcedurePerformed[]
+  asset           Asset                           @relation(fields: [assetId], references: [id])
+  department      Department?                     @relation(fields: [departmentId], references: [id])
+  technician      User                            @relation("TechnicianRecords", fields: [technicianId], references: [id])
+  signatures      Signature[]
+
+  @@index([assetId])
+  @@index([technicianId])
+  @@index([status])
+  @@index([maintenanceType])
+  @@index([createdAt])
+  @@map("maintenance_records")
+}
+
+model ProcedureType {
+  id          String                          @id @default(cuid())
+  name        String                          @unique
+  isCustom    Boolean                         @default(false)
+  performedIn MaintenanceProcedurePerformed[]
+
+  @@map("procedure_types")
+}
+
+model MaintenanceProcedurePerformed {
+  id                  String            @id @default(cuid())
+  maintenanceRecordId String
+  procedureTypeId     String
+  customLabel         String?
+  maintenanceRecord   MaintenanceRecord @relation(fields: [maintenanceRecordId], references: [id], onDelete: Cascade)
+  procedureType       ProcedureType     @relation(fields: [procedureTypeId], references: [id])
+
+  @@unique([maintenanceRecordId, procedureTypeId, customLabel])
+  @@map("maintenance_procedures_performed")
+}
+
+model MaintenancePart {
+  id                  String            @id @default(cuid())
+  maintenanceRecordId String
+  partName            String
+  quantity            Int               @default(1)
+  cost                Decimal?          @db.Decimal(10, 2)
+  maintenanceRecord   MaintenanceRecord @relation(fields: [maintenanceRecordId], references: [id], onDelete: Cascade)
+
+  @@map("maintenance_parts")
+}
+
+model MaintenanceAttachment {
+  id                  String            @id @default(cuid())
+  maintenanceRecordId String
+  type                AttachmentType
+  filePath            String
+  fileName            String
+  fileSizeBytes       Int?
+  uploadedAt          DateTime          @default(now())
+  maintenanceRecord   MaintenanceRecord @relation(fields: [maintenanceRecordId], references: [id], onDelete: Cascade)
+
+  @@map("maintenance_attachments")
+}
+
+model Signature {
+  id                  String            @id @default(cuid())
+  maintenanceRecordId String
+  signerRole          SignerRole
+  signerUserId        String
+  signatureImagePath  String?
+  signedAt            DateTime          @default(now())
+  maintenanceRecord   MaintenanceRecord @relation(fields: [maintenanceRecordId], references: [id], onDelete: Cascade)
+  signerUser          User              @relation(fields: [signerUserId], references: [id])
+
+  @@map("signatures")
+}
+
+model MaintenanceSchedule {
+  id                 String            @id @default(cuid())
+  assetId            String
+  frequency          ScheduleFrequency
+  customIntervalDays Int?
+  lastPerformedDate  DateTime?
+  nextDueDate        DateTime
+  isActive           Boolean           @default(true)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  asset              Asset             @relation(fields: [assetId], references: [id])
+
+  @@index([assetId])
+  @@index([nextDueDate])
+  @@map("maintenance_schedules")
+}
+
+model Notification {
+  id           String           @id @default(cuid())
+  userId       String?
+  departmentId String?
+  type         NotificationType
+  message      String
+  isRead       Boolean          @default(false)
+  assetId      String?
+  createdAt    DateTime         @default(now())
+  asset        Asset?           @relation(fields: [assetId], references: [id])
+  department   Department?      @relation(fields: [departmentId], references: [id])
+  user         User?            @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id         String      @id @default(cuid())
+  userId     String?
+  action     AuditAction
+  entityType String
+  entityId   String?
+  oldValue   Json?
+  newValue   Json?
+  ipAddress  String?
+  timestamp  DateTime    @default(now())
+  user       User?       @relation(fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+enum RoleName {
+  SYSTEM_ADMIN
+  ICT_TECHNICIAN
+  DEPARTMENT_REPRESENTATIVE
+  AUDITOR
+}
+
+enum DeviceCategory {
+  COMPUTER
+  NETWORK_DEVICE
+  PRINTER
+  UPS
+  PROJECTOR
+  SCANNER
+  OTHER
+}
+
+enum AssetStatus {
+  ACTIVE
+  FAULTY
+  UNDER_MAINTENANCE
+  RETIRED
+  LOST
+  DISPOSED
+}
+
+enum MaintenanceType {
+  ROUTINE
+  CORRECTIVE
+  PREVENTIVE
+  EMERGENCY
+}
+
+enum MaintenanceStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum AttachmentType {
+  PHOTO
+  PDF_REPORT
+  INVOICE
+  DOCUMENT
+}
+
+enum SignerRole {
+  ICT_TECHNICIAN
+  DEPARTMENT_REPRESENTATIVE
+}
+
+enum ScheduleFrequency {
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  ANNUAL
+  CUSTOM
+}
+
+enum NotificationType {
+  MAINTENANCE_DUE
+  WARRANTY_EXPIRING
+  ASSET_RETIRED
+  MAINTENANCE_OVERDUE
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  EXPORT
+}
